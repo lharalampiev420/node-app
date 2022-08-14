@@ -51,6 +51,13 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 // Instance method available on documents
 userSchema.methods.correctPassword = async function (candidatePass) {
   return await bcrypt.compare(candidatePass, this.password);
@@ -77,7 +84,8 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
 
-  const timeToConfirm = 10 * 60 * 1000;
+  const timeToConfirm = 10 * 30 * 1000;
+
   this.passwordResetExpires = Date.now() + timeToConfirm;
 
   return resetToken;

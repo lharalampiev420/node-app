@@ -120,7 +120,6 @@ exports.getAllTours = async (req, res) => {
 exports.getTour = async (req, res, next) => {
   try {
     const tour = await Tour.findById(req.params.id);
-    console.log(tour);
 
     if (!tour) {
       return next(new AppError(`No tour found with ID ${req.params.id}`, 404));
