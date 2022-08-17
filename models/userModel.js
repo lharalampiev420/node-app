@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema(
       required: [true, 'A user must have an email !'],
       minlength: 8,
       validate: {
+        // Only works on .create() and .save() and NOT with .findByIdAndUpdate()
         validator: function (el) {
           return el === this.password;
         },
@@ -38,6 +39,7 @@ const userSchema = new mongoose.Schema(
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    active: { type: Boolean, default: true, select: false },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -55,6 +57,12 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// query middleware - this points to the current query
+userSchema.pre(/^find/, async function (next) {
+  this.find({ active: { $ne: false } });
   next();
 });
 
