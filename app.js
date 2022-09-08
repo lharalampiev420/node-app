@@ -10,6 +10,7 @@ const globalErrorHandler = require('./controller/errorController');
 
 const tourRouter = require('./routes/tourRoutes');
 const usersRouter = require('./routes/usersRoutes');
+const reviewsRouter = require('./routes/reviewsRoutes');
 
 const app = express();
 
@@ -58,6 +59,7 @@ app.use(
 // ROUTES MOUNTING
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/reviews', reviewsRouter);
 
 // JSON.parse() is used to parse json object to javascript object
 // JSON.stringify() is the opposite

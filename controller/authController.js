@@ -21,7 +21,7 @@ const createSendToken = (user, statusCode, res) => {
   };
   if (process.env.NODE_ENV === 'production') {
     cookieOptions.secure = true;
-    cookieOptions.samesite = 'strict';
+    cookieOptions.sameSite = 'strict';
   }
 
   res.cookie('jwt', token, cookieOptions);
@@ -66,7 +66,10 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');
 
     if (!user || !(await user.correctPassword(password))) {
-      return next(new AppError('Incorrect email or password', 401));
+      //return next(new AppError('Incorrect email or password', 401));
+      return res
+        .status(401)
+        .json({ status: 'fail', err: 'Wrong username or password ' });
     }
 
     createSendToken(user, 201, res);
